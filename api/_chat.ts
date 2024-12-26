@@ -3,15 +3,13 @@ import { getGPTResponse, generatePromptFromThread } from './_openai'
 
 const slack = new WebClient(process.env.SLACK_BOT_TOKEN)
 
-type Event = {
+type SlackEvent = {
   channel: string
   ts: string
   thread_ts?: string
 }
 
-export async function sendGPTResponse(event: Event) {
-  const { channel, ts, thread_ts } = event
-
+export async function sendGPTResponse({ channel, ts, thread_ts }: SlackEvent) {
   try {
     const thread = await slack.conversations.replies({
       channel,
@@ -29,11 +27,8 @@ export async function sendGPTResponse(event: Event) {
     })
   } catch (error) {
     if (error instanceof Error) {
-      await slack.chat.postMessage({
-        channel,
-        thread_ts: ts,
-        text: `<@${process.env.SLACK_ADMIN_MEMBER_ID}> Error: ${error.message}`,
-      })
+      // See Vercel Runtime Logs for errors: https://vercel.com/docs/observability/runtime-logs
+      throw new Error(`Error sending GPT response: ${error.message}`)
     }
   }
 }
