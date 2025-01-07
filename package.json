@@ -1,6 +1,9 @@
 {
   "name": "slackbot",
   "private": true,
+  "scripts" {
+    "postinstall": "prisma generate"
+  },
   "dependencies": {
     "@prisma/client": "6.1.0",
     "@slack/web-api": "7.0.1",
