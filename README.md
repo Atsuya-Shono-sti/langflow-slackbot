@@ -1,3 +1,11 @@
+# Langflow Slackbot
+
+以下のリポジトリを参考にして作成した．
+https://github.com/vercel/examples/tree/main/solutions/slackbot
+
+以下は本ソースに合わせて変更予定．
+---
+
 # OpenAI Slackbot with Node.js
 
 This is a Slackbot you can ask questions and get answers from OpenAI's GPT model.
