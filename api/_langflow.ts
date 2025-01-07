@@ -1,4 +1,5 @@
 import type { ConversationsRepliesResponse } from "@slack/web-api";
+import { logger } from "./_logger";
 
 export async function generatePromptFromThread({
   messages,
@@ -128,7 +129,7 @@ export class LangflowClient {
         stream,
         tweaks
       );
-      console.log("Init Response:", initResponse);
+      logger.info("Langflow response: " + JSON.stringify(initResponse));
       if (
         stream &&
         initResponse &&

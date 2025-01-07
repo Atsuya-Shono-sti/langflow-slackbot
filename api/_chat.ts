@@ -1,13 +1,8 @@
 import { WebClient } from "@slack/web-api";
 import { LangflowClient, generatePromptFromThread } from "./_langflow";
+import { logger } from "./_logger";
 
 const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
-const flowId = process.env.FLOW_ID;
-const langflowId = process.env.LANGFLOW_ID;
-const inputType = process.env.INPUT_TYPE;
-const outputType = process.env.OUTPUT_TYPE;
-const stream = process.env.STREAM === "true";
-const tweaks = process.env.TWEAKS;
 
 type SlackEvent = {
   channel: string;
@@ -15,7 +10,17 @@ type SlackEvent = {
   thread_ts?: string;
 };
 
-export async function sendGPTResponse({ channel, ts, thread_ts }: SlackEvent) {
+type LangflowSettings = {
+  token: string;
+  endpoint: string;
+  flowId: string;
+  langflowId: string;
+};
+
+export async function sendGPTResponse(
+  { channel, ts, thread_ts }: SlackEvent,
+  { token, endpoint, flowId, langflowId }: LangflowSettings
+) {
   try {
     const thread = await slack.conversations.replies({
       channel,
@@ -24,22 +29,11 @@ export async function sendGPTResponse({ channel, ts, thread_ts }: SlackEvent) {
     });
     const inputValue = await generatePromptFromThread(thread);
 
-    if (!flowId || !langflowId) {
-      throw new Error("FLOW_ID or LANGFLOW_ID is not set");
+    if (!endpoint || !token || !flowId || !langflowId) {
+      throw new Error("Langflow config is not set all");
     }
 
-    if (
-      !process.env.LANGFLOW_BASE_URL ||
-      !process.env.LANGFLOW_APPLICATION_TOKEN
-    ) {
-      throw new Error(
-        "LANGFLOW_BASE_URL or LANGFLOW_APPLICATION_TOKEN is not set"
-      );
-    }
-    const langflowClient = new LangflowClient(
-      process.env.LANGFLOW_BASE_URL,
-      process.env.LANGFLOW_APPLICATION_TOKEN
-    );
+    const langflowClient = new LangflowClient(endpoint, token);
 
     const response = await langflowClient.runFlow(
       flowId,
@@ -54,11 +48,17 @@ export async function sendGPTResponse({ channel, ts, thread_ts }: SlackEvent) {
       throw new Error("Invalid response from LangflowClient");
     }
 
-    await slack.chat.postMessage({
-      channel,
-      thread_ts: ts,
-      text: `${response.outputs[0].outputs[0].results.message.text}`,
-    });
+    logger.info("Langflow response: " + JSON.stringify(response));
+
+    await slack.chat
+      .postMessage({
+        channel,
+        thread_ts: ts,
+        text: `${response.outputs[0].outputs[0].results.message.text}`,
+      })
+      .then((response) => {
+        logger.info("Message sent: " + JSON.stringify(response));
+      });
   } catch (error) {
     if (error instanceof Error) {
       // See Vercel Runtime Logs for errors: https://vercel.com/docs/observability/runtime-logs
