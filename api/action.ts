@@ -3,6 +3,7 @@ import { isValidSlackRequest } from "./_validate-request";
 import { langflowSettings } from "./events";
 import { displayModal } from "./_modal";
 import { logger } from "./_logger";
+import { displayHome } from "./_home";
 
 export async function POST(request: Request) {
   const rawBody = await request.text();
@@ -40,16 +41,22 @@ export async function POST(request: Request) {
       const flowId =
         payload.view.state.values.inputFlowId.plain_text_input_action.value;
 
-      await Configure(userid, endpoint, token, langflowId, flowId)
-        .then(async () => {
-          await prisma.$disconnect();
-        })
-        .catch(async (e) => {
-          console.error(e);
-          await prisma.$disconnect();
-          process.exit(1);
-        });
-      return new Response("Success!", { status: 200 });
+      try {
+        await Configure(userid, endpoint, token, langflowId, flowId)
+          .then(async () => {
+            await prisma.$disconnect();
+          })
+          .catch(async (e) => {
+            console.error(e);
+            await prisma.$disconnect();
+            process.exit(1);
+          });
+
+        await displayHome(langflowSettings);
+        return new Response(null, { status: 200 });
+      } catch (error: any) {
+        logger.error(`Error setting config: ${error.message}`);
+      }
     }
   }
 

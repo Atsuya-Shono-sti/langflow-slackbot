@@ -15,13 +15,17 @@ export async function Configure(
       userid: userId,
     },
     update: {
+      ...(endpoint && { endpoint: endpoint }),
+      ...(token && { token: token }),
+      ...(flowId && { flowId: flowId }),
+      ...(langflowId && { langflowId: langflowId }),
+    },
+    create: {
+      userid: userId,
       endpoint: endpoint,
       token: token,
       flowId: flowId,
       langflowId: langflowId,
-    },
-    create: {
-      userid: userId,
     },
   });
   logger.info("Update config" + upsertConfig);
