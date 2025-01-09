@@ -52,7 +52,7 @@ export async function POST(request: Request) {
             process.exit(1);
           });
 
-        await displayHome(langflowSettings);
+        await displayHome(langflowSettings, userid);
         return new Response(null, { status: 200 });
       } catch (error: any) {
         logger.error(`Error setting config: ${error.message}`);
