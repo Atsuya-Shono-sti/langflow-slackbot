@@ -2,7 +2,7 @@
   "name": "slackbot",
   "private": true,
   "scripts": {
-    "postinstall": "prisma generate && prisma migrate deploy"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "6.1.0",
