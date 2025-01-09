@@ -1,15 +1,16 @@
 {
   "name": "slackbot",
   "private": true,
+  "postinstall": "prisma generate",
   "dependencies": {
-    "@prisma/client": "6.1.0",
+    "@prisma/client": "^6.2.1",
     "@slack/web-api": "7.0.1",
-    "openai": "4.26.0"
+    "openai": "4.26.0",
+    "prisma": "^6.2.1"
   },
   "devDependencies": {
     "@logtape/logtape": "^0.8.0",
     "@types/node": "20.11.16",
-    "prisma": "^6.1.0",
     "typescript": "5.3.3"
   }
 }

@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "outDir": "./dist"
+    "outDir": "./public"
   },
   "exclude": ["node_modules"],
   "include": ["api"]
