@@ -1,67 +1,78 @@
-# OpenAI Slackbot with Node.js
+# Langflow Slackbot
 
-This is a Slackbot you can ask questions and get answers from OpenAI's GPT model.
+## 機能
 
-### Environment Variables
+[DataStax Astra](https://astra.datastax.com)上の Langflow で構築した AI ワークフローを SlackBot にメンションするだけでチャットすることができる．
 
-After completing the setup instructions below, you will have the following `.env` file in your project for testing locally, and the same environment variables added on Vercel:
+以下のリポジトリを参考にして作成した。
+https://github.com/vercel/examples/tree/main/solutions/slackbot
 
-```bash
-OPENAI_API_KEY=
-SLACK_BOT_TOKEN=
-SLACK_SIGNING_SECRET=
-SLACK_ADMIN_MEMBER_ID=
-```
+## 使用技術
 
-#### OpenAI API Key
+- Typescript
+- Vercel
+- Prisma
+- Neon
 
-- Create a new key on [OpenAI API Keys](https://platform.openai.com/api-keys) and "Create new secret key", optionally naming the key.
-- Add the key to Vercel's environment variables as `OPENAI_API_KEY`.
+## デプロイ
 
-#### Slack Bot Token & Signing Secret
+### Slackbot 作成
 
-Go to [Slack API Apps Page](https://api.slack.com/apps):
+- 以下にアクセスして、新しく Slack App を作成する
+  https://api.slack.com/apps
 
-- Create new App
-  - From Scratch
-  - Name your app & pick a workspace
-- Go to OAuth & Permissions
-  - Scroll to scopes
-  - Add the following scopes
-    - `app_mentions:read`
-    - `channels:history`
-    - `chat:write`
-    - `commands`
-  - Click "Install to Workplace"
-  - Copy **Bot User OAuth Token**
-  - Add the token to Vercel's environment variables as `SLACK_BOT_TOKEN`
-- Getting signing secret
-  - Basic Information --> App Credentials --> Copy **Signing Secret**
-  - Add the secret to Vercel's environment variables as `SLACK_SIGNING_SECRET`
+- 以下の manifest からアプリを作成する．
+  slackapp/manifest.json
 
-#### Admin's Slack Member ID
+- アプリの設定画面より Workspace にインストールする．
+  Setting > Install App
 
-- Click on your profile picture in Slack and click **Profile**.
-- Click on the three dots in the middle right corner and select **Copy member ID**.
-- Add the ID to Vercel's environment variables as `SLACK_ADMIN_MEMBER_ID`.
+![インストール画面](pics/install_image.png)
 
-### Enable Slack Events
+- OAuth トークンを控える
+  インストール後、同ページに"Bot User OAuth Token"が表示されるのでメモする．
+  .env の`SLACK_BOT_TOKEN`に設定する．
 
-After successfully deploying the app, go to [Slack API Apps Page](https://api.slack.com/apps) and select your app:
+- アプリの設定画面より Signing Secret を確認する．
+  Basic Information > App Credentials
+  .env の`SLACK_SIGNING_SECRET`に設定する．
 
-- Go to **Event Subscriptions** and enable events.
-- Add the following URL to **Request URL**:
-  - `https://<your-vercel-app>.vercel.app/api/events`
-  - Make sure the URL is verified, otherwise check out [Vercel Logs](https://vercel.com/docs/observability/runtime-logs) for troubleshooting.
-  - Subscribe to bot events by adding:
-    - `app_mention`
-    - `channel_created`
-  - Click **Save Changes**.
-- Slack requires you to reinstall the app to apply the changes.
+### Neon で DB 作成
 
-## Local Development
+[Neon](https://console.neon.tech/app/projects)よりプロジェクトを作成する．
+DB 名などは任意で OK．
 
-Use the [Vercel CLI](https://vercel.com/docs/cli) and [localtunnel](https://github.com/localtunnel/localtunnel) to test out this project locally:
+### Vercel で API のデプロイ
+
+- [Vercel](https://vercel.com)で新規プロジェクトを作成する．
+  本リポジトリを自身の Github アカウントに Fork 等して Vercel プロジェクトにインポートする．
+
+- プロジェクトのダッシュボードより、Setting タブに遷移する．
+
+- Integrations より、MarketPlace から Neon を探す．
+  ![インテグレーション](pics/integration_image.png)
+
+- Neon のインテグレーションでアカウントを接続する．
+  https://vercel.com/marketplace/neon
+
+- Vercel のプロジェクト Setting タブに戻り、Environment Variables を設定する．
+  事前に確認している、`SLACK_BOT_TOKEN`と`SLACK_SIGNING_SECRET`を設定する．
+  設定されていなければ、`DATABASE_URL`も Neon のコンソールからデータベース URL 確認して設定する．
+
+- Vercel プロジェクト画面から、再度デプロイする
+  ・・・ > Create Deployment
+
+- Slackbot 設定
+  - Vercel のプロジェクトホームからドメイン(例では https://<example-endpoint.vercel.app>)を確認する．
+  - Slack アプリ設定画面から Event Subscription と Interactivity & Shortcuts の Request URL をそれぞれ以下のように設定する．
+    - "event_subscriptions":
+      "request_url": "https://<example-endpoint.vercel.app>/api/events"
+    - interactivity":
+      "request_url": "https://<example-endpoint.vercel.app>/api/action"
+
+### ローカル開発
+
+[Vercel CLI](https://vercel.com/docs/cli)と[ngrok](https://dashboard.ngrok.com/get-started/setup/linux)を使用して、このプロジェクトをローカルでテストする：
 
 ```sh
 pnpm i -g vercel
@@ -69,7 +80,8 @@ pnpm vercel dev --listen 3000 --yes
 ```
 
 ```sh
-npx localtunnel --port 3000
+ngrok login
+ngrok http 3000
 ```
 
-Make sure to modify the [subscription URL](./README.md/#enable-slack-events) to the `localtunnel` URL.
+[Slack イベントの有効化](./README.md/#enable-slack-events)の際に、`ngrok` URL にサブスクリプション URL を変更してください。
