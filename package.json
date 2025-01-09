@@ -9,7 +9,8 @@
     "@slack/web-api": "7.0.1",
     "@types/ws": "^8.5.13",
     "openai": "4.26.0",
-    "prisma": "^6.2.1"
+    "prisma": "^6.2.1",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@logtape/logtape": "^0.8.0",
