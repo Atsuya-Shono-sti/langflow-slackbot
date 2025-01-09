@@ -46,6 +46,8 @@ DB 名などは任意で OK．
 
 - [Vercel](https://vercel.com)で新規プロジェクトを作成する．
   本リポジトリを自身の Github アカウントに Fork 等して Vercel プロジェクトにインポートする．
+  以下からでも可．
+  [Deploy](https://vercel.com/new/clone?repository-url=https://github.com/Atsuya-Shono-sti/langflow-slackbot&env=DATABASE_URL,SLACK_BOT_TOKEN,SLACK_SIGNING_SECRET)
 
 - プロジェクトのダッシュボードより、Setting タブに遷移する．
 
