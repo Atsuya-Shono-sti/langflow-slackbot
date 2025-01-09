@@ -3,8 +3,11 @@
   "private": true,
   "postinstall": "prisma generate",
   "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "@prisma/adapter-neon": "^6.2.1",
     "@prisma/client": "^6.2.1",
     "@slack/web-api": "7.0.1",
+    "@types/ws": "^8.5.13",
     "openai": "4.26.0",
     "prisma": "^6.2.1"
   },
