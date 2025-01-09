@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       if (eventType === "app_home_opened") {
         logger.info("App Home Opened");
         try {
-          await displayHome(langflowSettings);
+          await displayHome(langflowSettings, userId);
           return new Response("Success!", { status: 200 });
         } catch (error: any) {
           logger.error(`Error displaying home: ${error.message}`);

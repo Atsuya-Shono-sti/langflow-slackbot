@@ -2,14 +2,16 @@ import { WebClient } from "@slack/web-api";
 import { LangflowSettings } from "./events";
 
 const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
-const user_id = process.env.SLACK_ADMIN_MEMBER_ID;
 
-export const displayHome = async (langflowSettings: LangflowSettings) => {
-  if (!user_id) {
+export const displayHome = async (
+  langflowSettings: LangflowSettings,
+  userId: string
+) => {
+  if (!userId) {
     throw new Error("USER_ID is not set");
   }
   const view = await slack.views.publish({
-    user_id,
+    user_id: userId,
     view: {
       type: "home",
       blocks: [
