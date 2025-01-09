@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   const payload = JSON.parse(rawBody);
   const requestType = payload.type;
 
-  logger.info("Request payload" + JSON.stringify(payload));
+  logger.info("Request payload: " + JSON.stringify(payload));
 
   // See https://api.slack.com/events/url_verification
   if (requestType === "url_verification") {
