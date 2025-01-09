@@ -2,15 +2,11 @@ import { WebClient } from "@slack/web-api";
 import { LangflowSettings } from "./events";
 
 const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
-const user_id = process.env.SLACK_ADMIN_MEMBER_ID;
 
 export const displayModal = async (
   langflowSettings: LangflowSettings,
   trigger_id: string
 ) => {
-  if (!user_id) {
-    throw new Error("USER_ID is not set");
-  }
   const modal = await slack.views.open({
     trigger_id,
     view: {
