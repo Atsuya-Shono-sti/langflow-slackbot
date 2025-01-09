@@ -8,10 +8,10 @@ import {
 export async function initLogger() {
   await configure({
     sinks: {
-      file: getFileSink("logs/app.log"),
+      console: getConsoleSink(),
     },
     filters: {},
-    loggers: [{ category: "app", lowestLevel: "info", sinks: ["file"] }],
+    loggers: [{ category: "app", lowestLevel: "info", sinks: ["console"] }],
   });
 }
 
