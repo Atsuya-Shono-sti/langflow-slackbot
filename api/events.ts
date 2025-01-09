@@ -19,7 +19,7 @@ export let langflowSettings: LangflowSettings = {
 };
 
 export async function POST(request: Request) {
-  logger ? await initLogger() : null;
+  logger ? null : await initLogger();
 
   // logger.info("Request header: ");
   // request.headers.forEach((value, name) => {
